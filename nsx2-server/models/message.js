@@ -11,16 +11,21 @@ const messageSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
-});
+},
+{
+    // Setting timestamps to true will create created_at and updated_at timestamps for each message
+    timestamps: true
+}
+);
 
 // Define a .pre hook that gets triggered right before deleting a message
 // This hook needs to find a user that created that hook and delete the message id from users messages array
 messageSchema.pre('remove', async function(next){
     try {
     // Find a user
-    const user = await User.findById(this.userId)
+    const user = await User.findById(this.user);
     // Remove the id of the message from their messages list using mongoose's remove method which is synchronous jsut like splice
-    user.message.remove(this.id);
+    user.message.remove(this._id);
     // Save that user with mongoose - this is async
     await user.save();
     return next()

@@ -18,7 +18,31 @@ app.use(bodyParser.json());
 
 /*=== STANDARD ROUTES ===*/
 // These below can be any generic server rendered routes handled immediately in this index.js file
-// app.get('/', (req, res) => res.send('test'));
+// app.get('/', (req, res) => res.send('test homepage'));
+
+// Get all the messages for anyone who is logged in
+app.get('/api/messages', loginRequired, async function (req, res, next) {
+    try {
+        let messages = await db.Message
+                        // Find all messages
+                        .find()
+                        // Sort all messages descending usign the timestamp variable createdAt that comes when you set timestamp to true within Schema
+                        .sort({createdAt: 'desc'})
+                        // Based on the user id that is stored inside found message, populate that user...
+                        //... aka find that user with that id and get only his username and image url
+                        .populate('user', {
+                            username: true,
+                            profileImageUrl: true
+                        });
+        // Send all the messages back to requestor of json api
+        return res.status(200).json(messages);
+    }
+    catch(err) {
+        return next(err);
+    }
+});
+
+
 
 /*== PREFIXED ROUTES ==*/
 // These are routes that are NOT handled here in this index.js file, nd instead they will be handeled in reparate files
@@ -27,6 +51,10 @@ app.use(bodyParser.json());
 app.use('/api/auth', authRoutes);
 // To create a message, first I'm checking if used is logged in, and then i'm checking if this is the user that created the message
 app.use('/api/users/:id/messages', loginRequired, ensureCorrectUser, messagesRoutes);
+
+
+
+/*----------------------------------------------------------------*/
 
 // If none of the routes match, then user hit a non-existing route.
 // In this case, handle errors by setting status to 404

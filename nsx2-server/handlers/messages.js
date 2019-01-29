@@ -1,5 +1,6 @@
 const db = require('../models/index');
 
+/*=== CREATE MESSAGE ===*/
 // api/users/:id/messages
 // creating a message requires goes back and forth to database 4 times
 exports.createMessage = async function(req, res, next) {
@@ -33,6 +34,37 @@ exports.createMessage = async function(req, res, next) {
     }
 }
 
-exports.getMessage = async function(req, res, next) {}
+/*=== GET MESSAGE ===*/
+exports.getMessage = async function(req, res, next) {
+    try {
+        // Find a message n database based on the message_id in the params
+        let message = await db.Message.find(req.params.message_id);
+        // Return the message received from database in json format
+        return res.status(200).json(message);
+    }
+    catch(err) {
+        // Bubble up the error to error handler
+        return next(err);
+    }
+}
 
-exports.deleteMessage = async function(req, res, next) {}
+/*=== DELETE MESSAGE ===*/
+exports.deleteMessage = async function(req, res, next) {
+    try {
+        // Find a message n database based on the message_id in the params
+        /* 
+        Because in the models/message.js file I'musing a pre remove hook, I'm not able to
+        use the findByIdAndRemove() mongoose method because the 'remove' hook actually requires the 
+        remove() method to be ran in order to be triggered.
+        */
+        let foundMessage = await db.Message.findById(req.params.message_id);
+        // Remove message using .remove() from database
+        await foundMessage.remove();
+        // Return the message that was just deleted back to user in json format
+        return res.status(200).json(foundMessage);
+    }
+    catch(err) {
+        // Bubble up any errors to error handlers
+        return next(err);
+    }
+}

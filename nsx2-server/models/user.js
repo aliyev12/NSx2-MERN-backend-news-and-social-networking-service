@@ -24,6 +24,10 @@ const userSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Message'
     }]
+},
+{
+    // Setting timestamps to true will create created_at and updated_at timestamps for each user
+    timestamps: true
 });
 
 // Create a hook before saving a password by putting them on .put method of the user schema
