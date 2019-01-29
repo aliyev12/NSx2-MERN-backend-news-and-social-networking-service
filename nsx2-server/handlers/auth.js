@@ -30,7 +30,8 @@ exports.signin = async function (req, res, next) {
           profileImageUrl,
         },
         // As a second arameter provide the jwt secret key
-        process.env.JWT_SECRET_KEY
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: '1h' }
       );
       // Finally send the status 200 and put together a json with information returned...
       //... from mongo in user object (id, username, img) as well as the newly signed/created jwt token
@@ -68,7 +69,8 @@ exports.signup = async function (req, res, next) {
         username: username,
         profileImageUrl,
       },
-      process.env.JWT_SECRET_KEY
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: '1h' }
     );
 
     // If everything above goes well, we'll send a status 200...
