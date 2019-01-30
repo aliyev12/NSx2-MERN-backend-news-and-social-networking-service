@@ -21,7 +21,7 @@ exports.loginRequired = function (req, res, next) {
     // Get token from HTTP header (metadata about request)
     // Because the req.headers.authorization consists of Bearer some-token-blablabla...
     //...I'm splitting the string to withdraw the token only from it
-    const token = req.headers.authorization;
+    const token = req.headers.authorization.split(' ')[1];
     // Decode the token by passing the token and secret key to jwt.verify()
     jwt.verify(token, process.env.JWT_SECRET_KEY, function(err, decodedPayload) {
         // If we have successfully decoded the payload (doesn't matter whats in it) then we're done, go next()
