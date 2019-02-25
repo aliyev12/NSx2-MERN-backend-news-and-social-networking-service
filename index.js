@@ -7,7 +7,8 @@ cors = require('cors'),
 bodyParser = require('body-parser'),
 errorHandler = require('./handlers/error'),
 authRoutes = require('./routes/auth'),
-messagesRoutes = require('./routes/messages')
+messagesRoutes = require('./routes/messages'),
+port = process.env.APP_PORT || 3000;
 
 const {loginRequired, ensureCorrectUser} = require('./middleware/auth');
 
@@ -18,7 +19,7 @@ app.use(bodyParser.json());
 
 /*=== STANDARD ROUTES ===*/
 // These below can be any generic server rendered routes handled immediately in this index.js file
-// app.get('/', (req, res) => res.send('test homepage'));
+app.get('/', (req, res) => res.send('Welcome to NSx2! :)'));
 
 // Get all the messages for anyone who is logged in
 app.get('/api/messages', loginRequired, async function (req, res, next) {
@@ -88,4 +89,15 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 /*=== LISTENING ===*/
-app.listen(process.env.PORT, () => console.log(`Server is listening on port ${process.env.PORT}`))
+app.listen(port, () => console.log(`Server is listening on port ${port}`))
+
+
+/*
+curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"email":"qqq@qqq.qqq","password":"11111111"}' \
+  172.31.86.120:8080/api/auth/signin
+  
+  
+  172.31.86.120
+  */
