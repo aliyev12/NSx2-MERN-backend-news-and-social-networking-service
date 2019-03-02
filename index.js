@@ -1,5 +1,6 @@
 // Load all environment variables for use within any file of this application
 require('dotenv').config();
+const db = require('./models/index');
 
 // Import dependencies
 const express = require('express'),
